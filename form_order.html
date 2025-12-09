@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jastip.den — Form Order</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ---------- GLOBAL ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #fef6f0;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #f0f0f0;
+      text-align: center;
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      transition: all 0.3s;
+      z-index: 11;
+      color: #ff6b35;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 107, 53, 0.1);
+    }
+
+    .back-btn i {
+      font-size: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #ff6b35;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    header p {
+      margin: 4px 0 0 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 30px 15px 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      animation: fadeIn 0.6s ease;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #ff6b35;
+      box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
+      outline: none;
+    }
+
+    .barang-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .barang-row input[type="text"] { flex: 2; }
+    .barang-row input[type="number"] { flex: 1; }
+
+    .remove-btn {
+      background: #ff5252;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .remove-btn:hover { 
+      background: #e55a2b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,82,82,0.3);
+    }
+    .remove-btn:active { transform: scale(0.95); }
+
+    .add-btn {
+      background: #ff6b35;
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .add-btn:hover { 
+      background-color: #e55a2b;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+    }
+    .add-btn:active { transform: scale(0.95); }
+
+    button[type="submit"] {
+      background-color: #ff6b35;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      margin-top: 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #e55a2b;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+    }
+    button[type="submit"]:active {
+      transform: scale(0.95);
+    }
+
+    /* ---------- FEEDBACK UI ---------- */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      backdrop-filter: blur(3px);
+    }
+
+    .spinner {
+      border: 4px solid #ddd;
+      border-top: 4px solid #ff6b35;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.95);
+      background: #ff6b35;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s, bottom 0.4s, transform 0.4s;
+      z-index: 2000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      bottom: 60px;
+      transform: translateX(-50%) scale(1);
+      pointer-events: auto;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      label { font-size: 14px; }
+      .add-btn, .remove-btn, button[type="submit"] {
+        font-size: 15px;
+        padding: 10px 14px;
+      }
+    }
+  /* ---------- TRACKING UI IMPROVEMENT ---------- */
+  .tracking {
+    margin-top: 45px;
+    border-top: 1px dashed #ff6b35;
+    padding-top: 25px;
+    text-align: center;
+  }
+
+  .tracking h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ff6b35;
+    margin-bottom: 8px;
+  }
+
+  .tracking p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+  }
+
+  .tracking-input-group {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  #kodePesanan {
+    width: 70%;
+    max-width: 260px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  #kodePesanan:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
+    outline: none;
+  }
+
+  .track-btn {
+    background: #ff6b35;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .track-btn:hover {
+    background: #e55a2b;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+  }
+  .track-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Hasil tracking */
+  .status-box {
+    display: none;
+    margin-top: 20px;
+    padding: 18px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #ff6b35;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s ease;
+    text-align: left;
+  }
+
+  .status-box .status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .status-box .status-header span {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #ff6b35;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .status-box small {
+    color: #666;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .status-error {
+    background: #fff4f4;
+    border: 1px solid #ffdede;
+    color: #d64b4b;
+  }
+
+  .status-loading {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+  }
+
+  @media (max-width: 480px) {
+    #kodePesanan { width: 100%; }
+  }
+  </style>
+  <script src="config.js"></script>
+</head>
+<body>
+  <header>
+    <button class="back-btn" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1>Jastip.den</h1>
+    <p>Isi form berikut untuk melakukan pemesanan</p>
+  </header>
+
+  <div class="content">
+    <div class="container">
+      <form id="orderForm">
+        <label>Nama</label>
+        <input type="text" name="nama" required placeholder="Masukkan nama Anda">
+
+        <label>Nomor WA</label>
+        <input type="text" name="wa" required placeholder="contoh: 08123456789 / +628123456789">
+
+        <label>Barang yang Dipesan</label>
+        <div id="barangList">
+          <div class="barang-row">
+            <input type="text" name="barang[]" placeholder="Nama barang" required>
+            <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
+            <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
+          </div>
+        </div>
+        <button type="button" class="add-btn" onclick="addBarang()">+ Tambah Barang</button>
+
+        <label>Opsi 2 apabila pilihan Varian kosong</label>
+        <textarea name="catatan" rows="3" placeholder="Tulis opsi lain jika varian habis"></textarea>
+
+        <label>Alamat Pengiriman</label>
+        <textarea name="alamat" rows="3" required placeholder="Masukkan alamat lengkap"></textarea>
+
+        <button type="submit">Kirim Order</button>
+
+        <p style="text-align:center; font-size:13px; color:#777; margin-top:10px;">
+          🔒 Data Anda aman. Kami hanya menggunakan informasi ini untuk keperluan pemesanan.
+        </p>
+      </form>
+ <div class="tracking">
+  <h3>📦 Lacak Pesanan Anda</h3>
+  <p>Masukkan kode pesanan (misal: <b>JASTIP-XXXX</b>) untuk melihat status terbaru.</p>
+
+  <div class="tracking-input-group">
+    <input type="text" id="kodePesanan" placeholder="Masukkan kode pesanan">
+    <button type="button" class="track-btn" onclick="trackOrder()">Lacak</button>
+  </div>
+
+  <div id="statusBox" class="status-box"></div>
+</div>
+
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="spinner"></div>
+    <p style="color:#333; margin-top:15px;">Mengirim pesanan...</p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  const SCRIPT_URL = ENV.SCRIPT_URL;
+  const form = document.getElementById('orderForm');
+  const overlay = document.getElementById('overlay');
+  const toast = document.getElementById('toast');
+  const barangList = document.getElementById('barangList');
+
+  // Function to go back to previous page
+  function goBack() {
+    window.history.back();
+  }
+
+  function showToast(msg, color = "#ff6b35") {
+    toast.textContent = msg;
+    toast.style.background = color;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+function showToastHtml(msg, color = "#ff6b35", isHTML = false) {
+  if (isHTML) {
+    toast.innerHTML = msg; // <- render HTML
+  } else {
+    toast.textContent = msg;
+  }
+  toast.style.background = color;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 5000);
+}
+
+  function addBarang() {
+    const row = document.createElement('div');
+    row.className = 'barang-row';
+    row.innerHTML = `
+      <input type="text" name="barang[]" placeholder="Nama barang" required>
+      <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
+      <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
+    `;
+    barangList.appendChild(row);
+  }
+
+  function removeBarang(btn) {
+    if (barangList.children.length > 1) {
+      btn.parentElement.remove();
+    } else {
+      showToast("Minimal 1 barang harus ada!", "#e67e22");
+    }
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const nama = formData.get("nama");
+    const wa = formData.get("wa");
+    const catatan = formData.get("catatan");
+    const alamat = formData.get("alamat");
+    const barang = formData.getAll("barang[]");
+    const jumlah = formData.getAll("jumlah[]");
+
+    // validasi
+    if (!/^(\+62|0)\d{8,15}$/.test(wa)) {
+      document.querySelector('[name="wa"]').style.borderColor = "#e74c3c";
+      showToast("Nomor WA tidak valid!", "#e74c3c");
+      return;
+    }
+
+    overlay.style.display = "flex";
+
+    //const data = { nama, wa, catatan, alamat, barang, jumlah };
+// buat kode pesanan unik: contoh JASTIP-20251023-ABC123
+const kodePesanan = "JASTIP-" + new Date().toISOString().slice(0,10).replace(/-/g, "") +
+                    "-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+
+const data = { kodePesanan, nama, wa, catatan, alamat, barang, jumlah };
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        mode: "no-cors"
+      });
+      //showToast("✅ Pesanan berhasil dikirim!");
+//overlay.style.display = "none";
+
+// buat HTML toast dengan tombol copy
+const toastContent = `
+  ✅ Pesanan berhasil dikirim!<br>
+  <b>Kode Pesanan:</b> <span id="kodeText">${kodePesanan}</span>
+  <button id="copyKodeBtn" style="
+    background:#fff;
+    color:#ff6b35;
+    border:none;
+    padding:4px 8px;
+    border-radius:6px;
+    margin-left:6px;
+    cursor:pointer;
+  ">📋 Salin</button>
+`;
+
+// tampilkan toast
+showToastHtml(toastContent, "#ff6b35", true);
+
+// tambahkan event listener agar bisa dicopy
+setTimeout(() => {
+  const btn = document.getElementById("copyKodeBtn");
+  if (btn) {
+    btn.onclick = () => {
+      const kode = document.getElementById("kodeText").innerText;
+      navigator.clipboard.writeText(kode).then(() => {
+        btn.innerText = "✅ Disalin";
+        btn.style.background = "#28a745";
+        btn.style.color = "#fff";
+        setTimeout(() => {
+          btn.innerText = "📋 Salin";
+          btn.style.background = "#fff";
+          btn.style.color = "#ff6b35";
+        }, 2000);
+      });
+    };
+  }
+}, 300);
+//overlay.style.display = "none";
+//alert(`✅ Pesanan berhasil dikirim!\n\nKode Pesanan Anda: ${kodePesanan}\n\nGunakan kode ini untuk melacak //status pesanan Anda.`);
+// Setelah data berhasil dikirim ke Google Sheet
+      form.reset();
+      barangList.innerHTML = `
+        <div class="barang-row">
+          <input type="text" name="barang[]" placeholder="Nama barang" required>
+          <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
+          <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
+        </div>`;
+    } catch (err) {
+      showToast("❌ Gagal mengirim: " + err.message, "#e74c3c");
+    } finally {
+      overlay.style.display = "none";
+    }
+  });
+ // =====================
+  // TRACKING ORDER
+  // =====================
+  async function trackOrder() {
+  const kode = document.getElementById('kodePesanan').value.trim();
+  const box = document.getElementById('statusBox');
+  if (!kode) return showToast("Masukkan kode pesanan dulu!", "#e67e22");
+
+  box.style.display = "block";
+  box.className = "status-box status-loading";
+  box.innerHTML = "⏳ Mencari data pesanan...";
+
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=track&kode=${encodeURIComponent(kode)}`);
+    const data = await res.json();
+
+    if (data.status) {
+      box.className = "status-box";
+      box.innerHTML = `
+        <div class="status-header">
+          <span>${data.status.toUpperCase()}</span>
+        </div>
+        <p><b>Nama Pemesan:</b> ${data.nama ?? "-"}</p>
+        <p><b>Barang:</b> ${data.barang ?? "-"}</p>
+        <small>🕒 Terakhir diperbarui: ${data.updated ?? "-"}</small>
+      `;
+    } else {
+      box.className = "status-box status-error";
+      box.innerHTML = "❌ Kode pesanan tidak ditemukan. Cek kembali kode yang Anda masukkan.";
+    }
+  } catch (err) {
+    box.className = "status-box status-error";
+    box.innerHTML = "⚠️ Gagal memuat status. Silakan coba lagi nanti.";
+  }
+ // 👉 Tambahkan bagian ini biar status hilang otomatis setelah 5 detik
+  setTimeout(() => {
+    box.style.display = "none";
+    box.innerHTML = "";
+  }, 5000);
+}
+  </script>
+</body>
+</html>

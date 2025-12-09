@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jastip.den</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #fef6f0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ff6b35;
+        }
+        
+        /* Promo Banner */
+        .promo-banner {
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #fef6f0, #fff5ee);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            flex: 1;
+            padding-right: 40px;
+            z-index: 2;
+        }
+        
+        .hero-image {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        
+        .btn:hover {
+            background-color: #e55a2b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #ff6b35;
+            color: #ff6b35;
+        }
+        
+        .btn-outline:hover {
+            background-color: #ff6b35;
+            color: white;
+        }
+        
+        /* Stats Section */
+        .stats-container {
+            display: flex;
+            margin-top: 30px;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            color: #ff6b35;
+            margin-right: 15px;
+        }
+        
+        .stat-text {
+            font-weight: bold;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: #f7931e;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 50px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .step-card {
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background-color: #ff6b35;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        .step-icon {
+            font-size: 40px;
+            color: #f7931e;
+            margin-bottom: 20px;
+        }
+        
+        .step-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .step-card p {
+            color: #666;
+        }
+        
+        /* Restaurants Section */
+        .restaurants {
+            padding: 80px 0;
+            background-color: #fef6f0;
+        }
+        
+        .restaurants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .restaurant-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .restaurant-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .restaurant-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .restaurant-card:hover .restaurant-image img {
+            transform: scale(1.1);
+        }
+        
+        .restaurant-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff6b35;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .restaurant-info {
+            padding: 20px;
+        }
+        
+        .restaurant-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .restaurant-cuisine {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .restaurant-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rating {
+            color: #ffc107;
+        }
+        
+        .delivery-time {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background-color: #fef6f0;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            color: #ff6b35;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        /* Testimonials Section */
+        .testimonials {
+            padding: 80px 0;
+            background-color: #fef6f0;
+        }
+        
+        .testimonials-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .quote-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 40px;
+            color: rgba(255,107,53,0.1);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .customer-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .customer-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .customer-info .location {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .rating {
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+        
+        .testimonial-text {
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-cta {
+            background-color: white;
+            color: #ff6b35;
+            font-size: 18px;
+            padding: 15px 40px;
+        }
+        
+        .btn-cta:hover {
+            background-color: #f8f8f8;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ff6b35;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #ff6b35;
+        }
+        
+        .social-links {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: #ff6b35;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-content {
+                padding-right: 0;
+                margin-bottom: 40px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 30px;
+            }
+            
+            .stats-container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+        <div class="container">
+            <i class="fas fa-bolt"></i> Promo Hari Ini! Gratis Ongkir untuk Minimal Order Rp 50.000
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-motorcycle"></i>
+                    Jastip.den
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Beranda</a></li>
+                    <li><a href="#how-it-works">Cara Kerja</a></li>
+                    <li><a href="#restaurants">Mitra</a></li>
+                    <li><a href="#testimonials">Testimoni</a></li>
+                    <li><a href="#contact">Kontak</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Lapar? Ingin Makanan Favorit? Kami Jastipin!</h1>
+                <p>Jasa titip terpercaya di kotamu. Pesan dari mitra favorit tanpa perlu keluar rumah. Cepat, aman, dan terjangkau!</p>
+                <div class="hero-buttons">
+                    <a href="form_order.html" class="btn">Pesan Sekarang</a>
+                    <a href="#how-it-works" class="btn btn-outline">Cara Kerja</a>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-text">10+ Pelanggan</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stat-text">5+ Mitra</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-text">100% Cepat & Tepat</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1652953445949-125a4ecf8d5b?auto=format&fit=crop&q=80&w=1170" alt="Jastip Makanan">
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Cara Kerja Jastip.den</h2>
+            <p class="section-subtitle">Mudah sekali! Ikuti 3 langkah sederhana ini untuk menikmati makanan favoritmu</p>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Pilih Mitra</h3>
+                    <p>Cari mitra favoritmu dari daftar kami yang sudah terverifikasi</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Pesan Menu</h3>
+                    <p>Pilih menu yang kamu inginkan di "Pesan Sekarang"</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Tunggu di Rumah</h3>
+                    <p>Duduk manis, pesananmu akan diantar langsung ke depan pintu</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Restaurants Section -->
+    <section class="restaurants" id="restaurants">
+        <div class="container">
+            <h2 class="section-title">Mitra Favorit</h2>
+            <p class="section-subtitle">Pilihan mitra terbaik di kotamu, siap dijastipkan!</p>
+            
+            <div class="restaurants-grid">
+                <div class="restaurant-card">
+                    <div class="restaurant-image">
+                        <img src="https://wiratech.co.id/wp-content/uploads/2024/04/Roll-Cake-Wahyu-Austin.jpg" alt="Restoran">
+                        <div class="restaurant-badge">Populer</div>
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Wahyu Austin Pastry</div>
+                        <div class="restaurant-cuisine">Indonesian • Rollcake & Bakery</div>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.6
+                            </div>
+                            <div class="delivery-time">Setiap Hari</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="restaurant-card">
+                    <div class="restaurant-image">
+                        <img src="https://lh3.googleusercontent.com/gps-cs-s/AG0ilSwLex3YMbw5Hk4SdfygJx4RD5AC0MGm3pQtpRND4iiRpwXX0x_G74qEQjl_SJg0U6dDPgobVCgk9oPuYz71pqvxRypRYcofGff5_vKfwfHwRCOeq0BI9twvQKgLBte3dp9CtiqNEw=s1360-w1360-h1020-rw" alt="Restoran">
+                        <div class="restaurant-badge">Populer</div>
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Biblebake</div>
+                        <div class="restaurant-cuisine">Indonesian • Doughnuts & Cakes</div>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                4.9
+                            </div>
+                            <div class="delivery-time">Setiap Hari</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="restaurant-card">
+                    <div class="restaurant-image">
+                        <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/MTA-102608493/siliwangi_siliwangi_bolu_kukus_oleh_-_oleh_khas_bumi_pasundan_23_rasa_full01_tqnzpzsj.jpg" alt="Restoran">
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Siliwangi Bolu Kukus</div>
+                        <div class="restaurant-cuisine">Indonesian • Cake</div>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.7
+                            </div>
+                            <div class="delivery-time">Setiap Hari</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="restaurant-card">
+                    <div class="restaurant-image">
+                        <img src="https://lh3.googleusercontent.com/p/AF1QipMDZ7djKYCMDSd1PtRzfb30qQ53l6c58Hvo8NIQ=s1360-w1360-h1020-rw" alt="Restoran">
+                        <!-- <div class="restaurant-badge">Baru</div> -->
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Toko Kopi Tuku</div>
+                        <div class="restaurant-cuisine">Indonesian • Coffee</div>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.5
+                            </div>
+                            <div class="delivery-time">Setiap Hari</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="restaurant-card">
+                    <div class="restaurant-image">
+                        <img src="https://down-id.img.susercontent.com/file/120679f4a43659ff311c3e0b4398d048@resize_w900_nl.webp" alt="Restoran">
+                        <div class="restaurant-badge">Baru</div>
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">Pempek & Siomay "Ulu Bundar"</div>
+                        <div class="restaurant-cuisine">Indonesian • Food & Snack</div>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.3
+                            </div>
+                            <div class="delivery-time">Setiap Hari</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Mengapa Pilih Jastip.den?</h2>
+            <p class="section-subtitle">Keuntungan menggunakan jasa titip kami</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Aman & Terpercaya</h3>
+                    <p>Driver kami terverifikasi dan pesananmu diasuransikan</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Cepat & Tepat Waktu</h3>
+                    <p>Pengiriman kilat dengan estimasi waktu yang akurat</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- <i class="fas fa-dollar-sign"></i> -->
+                        <i class="fa-solid fa-rupiah-sign"></i>
+                    </div>
+                    <h3>Harga Terjangkau</h3>
+                    <p>Biaya jasa yang kompetitif tanpa biaya tersembunyi</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Customer Service 24/7</h3>
+                    <p>Tim support siap membantu kapanpun kamu butuhkan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">Apa Kata Pelanggan Kami</h2>
+            <p class="section-subtitle">Kepuasan pelanggan adalah prioritas utama kami</p>
+            
+            <div class="testimonials-container">
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <div class="testimonial-header">
+                        <img src="https://picsum.photos/seed/customer1/60/60.jpg" alt="Customer" class="customer-avatar">
+                        <div class="customer-info">
+                            <h4>Andi Pratama</h4>
+                            <div class="location">Magelang</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Jastip.den memang juara! Sering banget pesen makanan dari mitra favorit yang jauh, selalu tepat waktu dan makanannya masih hangat. Recommended!"</p>
+                </div>
+                
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <div class="testimonial-header">
+                        <img src="https://picsum.photos/seed/customer2/60/60.jpg" alt="Customer" class="customer-avatar">
+                        <div class="customer-info">
+                            <h4>Sarah Wijaya</h4>
+                            <div class="location">Magelang</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Sebagai ibu rumah tangga sibuk, Jastip.den sangat membantu. Ga perlu antri, makanan langganan keluarga bisa tetap dinikmati setiap hari. Terima kasih JastipKu!"</p>
+                </div>
+                
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <div class="testimonial-header">
+                        <img src="https://picsum.photos/seed/customer3/60/60.jpg" alt="Customer" class="customer-avatar">
+                        <div class="customer-info">
+                            <h4>Rizky Ahmad</h4>
+                            <div class="location">Magelang</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"Driver-nya ramah dan komunikatif. Pesanan selalu lengkap sesuai yang diorder. Harga jasa juga worth it. Keep up the good work!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Siap Menikmati Makanan Favoritmu?</h2>
+            <p>Jangan biarkan lapar mengganggumu! Pesan dan dapatkan promo spesial hari ini</p>
+            <a href="form_order.html" class="btn btn-cta">Pesan Sekarang</a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Tentang Jastip.den</h3>
+                    <p>Platform jasa titip makanan terpercaya di Indonesia. Menghubungkan kamu dengan mitra favorit tanpa perlu keluar rumah.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Menu Cepat</h3>
+                    <ul>
+                        <li><a href="#home">Beranda</a></li>
+                        <li><a href="#how-it-works">Cara Kerja</a></li>
+                        <li><a href="#restaurants">Mitra</a></li>
+                        <li><a href="#testimonials">Testimoni</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Layanan</h3>
+                    <ul>
+                        <li><a href="#">Jastip Makanan</a></li>
+                        <li><a href="#">Jastip Minuman</a></li>
+                        <li><a href="#">Jastip Snack</a></li>
+                        <li><a href="#">Jastip Paket Komplit</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Kontak</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Dsn. Glagahombo 02/07, Sucen, Salam, Magelang</li>
+                        <li><i class="fas fa-phone"></i> +62 889 8002 4009</li>
+                        <li><i class="fas fa-envelope"></i> info@jastipden.id</li>
+                        <!-- <li><i class="fab fa-whatsapp"></i> +62 812 3456 7890</li> -->
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 Jastip.den. Hak Cipta Dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Floating WhatsApp Button -->
+    <div class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    
+    <script>
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards
+        document.querySelectorAll('.step-card, .restaurant-card, .feature-card, .testimonial-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+        
+        // WhatsApp Button Click
+        document.querySelector('.whatsapp-float').addEventListener('click', function() {
+            window.open('https://wa.me/6288980024009?text=Halo%20Jastip.den,%20saya%20ingin%20bertanya%20tentang%20jasa%20titip%20makanan', '_blank');
+        });
+    </script>
+</body>
+</html>

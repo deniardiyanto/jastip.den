@@ -252,6 +252,9 @@
                 <option value="diproses" ${d.status === "diproses" ? "selected" : ""}>Diproses</option>
                 <option value="selesai" ${d.status === "selesai" ? "selected" : ""}>Selesai</option>
               </select>
+               <div class="status-badge">
+              <button onclick="">Kirim Invoice</button>
+              </div>
             </div>
             <small style="color:#999;"><i>${new Date(d.tanggal).toLocaleString("id-ID")}</i></small>
           </div>

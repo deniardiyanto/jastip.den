@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard Jastip</title>
+  <style>
+    :root {
+      --primary: #007bff;
+      --primary-light: #00bfff;
+      --text-dark: #2c3e50;
+      --bg-light: #f5f6fa;
+      --card-radius: 12px;
+    }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--bg-light);
+      margin: 0;
+      padding: 0;
+      color: var(--text-dark);
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    header h1 { font-size: 1.2em; margin: 0; }
+    .menu-btn {
+      display: none;
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px;
+      background: #ecf0f1;
+      position: sticky;
+      top: 60px;
+      z-index: 15;
+      overflow-x: auto;
+      scrollbar-width: none;
+      transition: all 0.3s ease;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-bar button {
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      background: #bdc3c7;
+      color: white;
+      font-weight: 600;
+      transition: 0.3s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .filter-bar button.active { background: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .filter-bar input[type="date"] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: white;
+      font-size: 0.9em;
+      flex-shrink: 0;
+    }
+    .container {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+    }
+    .order-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border-left: 6px solid var(--primary);
+      transition: transform 0.2s ease;
+    }
+    .order-card:hover { transform: scale(1.02); }
+    .order-info { line-height: 1.6; margin-bottom: 12px; }
+    .status {
+      display: flex; align-items: center; justify-content: space-between; margin-top: 10px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      color: white;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .status-baru { background: #3498db; }
+    .status-diproses { background: #f39c12; }
+    .status-selesai { background: #2ecc71; }
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9em;
+    }
+    #loading { text-align: center; padding: 20px; color: #555; }
+    #refresh {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 50%;
+      width: 54px; height: 54px;
+      cursor: pointer; font-size: 22px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      transition: all 0.3s ease; z-index: 30;
+    }
+    #refresh:hover { transform: rotate(90deg); background: #005dc1; }
+    .toast {
+      position: fixed; bottom: 85px; right: 20px;
+      background: #2ecc71; color: white;
+      padding: 10px 20px; border-radius: 10px;
+      opacity: 0; transition: opacity 0.4s;
+      font-weight: 500; z-index: 50;
+    }
+    .toast.show { opacity: 1; }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1em; }
+      .menu-btn { display: block; }
+      .filter-bar { flex-direction: column; display: none; }
+      .filter-bar.show { display: flex; }
+      .filter-bar input[type="date"], .filter-bar button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📦 Admin Dashboard Jastip</h1>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
+
+  <div class="filter-bar" id="filterBar">
+    <button class="active" onclick="filterStatus('all')">Semua</button>
+    <button onclick="filterStatus('baru')">Baru</button>
+    <button onclick="filterStatus('diproses')">Diproses</button>
+    <button onclick="filterStatus('selesai')">Selesai</button>
+    <input type="date" id="filterDate" onchange="applyDateFilter()" />
+  </div>
+
+  <div id="loading">Memuat pesanan...</div>
+  <div class="container" id="orderContainer"></div>
+
+  <button id="refresh" onclick="loadOrders()">⟳</button>
+  <div class="toast" id="toast">✅ Status diperbarui!</div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJ5rxJJ9NY3mYRc9ovk6TBnat6rFl4KinQFqDiVnEe4o6dc2MWoQCQ-kHoNeD2WsFw3Q/exec";
+    let allOrders = [];
+    let currentStatus = "all";
+    let currentDate = "";
+
+    async function loadOrders() {
+      document.getElementById("loading").style.display = "block";
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getOrders`);
+        const data = await res.json();
+        allOrders = data.reverse();
+        renderOrders(currentStatus);
+        updateCounts();
+      } catch (err) {
+        document.getElementById("orderContainer").innerHTML =
+          `<p style='text-align:center;color:red;'>Gagal memuat data</p>`;
+      }
+      document.getElementById("loading").style.display = "none";
+    }
+
+    function updateCounts() {
+      const counts = {
+        all: allOrders.length,
+        baru: allOrders.filter(o => o.status === "baru").length,
+        diproses: allOrders.filter(o => o.status === "diproses").length,
+        selesai: allOrders.filter(o => o.status === "selesai").length
+      };
+      document.querySelectorAll(".filter-bar button").forEach(btn => {
+        const type = btn.textContent.toLowerCase().split("(")[0].trim();
+        if (counts[type] !== undefined) {
+          btn.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} (${counts[type]})`;
+        } else if (type === "semua") {
+          btn.textContent = `Semua (${counts.all})`;
+        }
+      });
+    }
+
+    function filterStatus(status) {
+      document.querySelectorAll(".filter-bar button").forEach(b => b.classList.remove("active"));
+      event.target.classList.add("active");
+      currentStatus = status;
+      renderOrders(status);
+    }
+
+    function applyDateFilter() {
+      currentDate = document.getElementById("filterDate").value;
+      renderOrders(currentStatus);
+    }
+
+    function renderOrders(status) {
+      const container = document.getElementById("orderContainer");
+      container.innerHTML = "";
+
+      let filtered = status === "all" ? allOrders : allOrders.filter(o => o.status === status);
+
+      if (currentDate) {
+        filtered = filtered.filter(o => {
+          const tgl = new Date(o.tanggal).toISOString().slice(0, 10);
+          return tgl === currentDate;
+        });
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p style='text-align:center;color:#666;'>Tidak ada data</p>";
+        return;
+      }
+
+      filtered.forEach(d => {
+        const card = document.createElement("div");
+        card.className = "order-card";
+
+        const badgeClass =
+          d.status === "selesai" ? "status-selesai" :
+          d.status === "diproses" ? "status-diproses" : "status-baru";
+
+        card.innerHTML = `
+          <div class="order-info">
+            <b>${d.nama}</b> (${d.wa})<br>
+            🆔 <b>${d.kodePesanan}</b><br>
+            🧾 ${d.barang}<br>
+            🗒️ ${d.catatan || "-"}<br>
+            📍 <small>${d.alamat}</small><br>
+            <div class="status">
+              <span class="status-badge ${badgeClass}">${d.status}</span>
+              <select onchange="updateStatus('${d.kodePesanan}','${d.status}',this.value)">
+                <option value="baru" ${d.status === "baru" ? "selected" : ""}>Baru</option>
+                <option value="diproses" ${d.status === "diproses" ? "selected" : ""}>Diproses</option>
+                <option value="selesai" ${d.status === "selesai" ? "selected" : ""}>Selesai</option>
+              </select>
+            </div>
+            <small style="color:#999;"><i>${new Date(d.tanggal).toLocaleString("id-ID")}</i></small>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function updateStatus(kodePesanan, oldStatus, newStatus) {
+      if (oldStatus === newStatus) return;
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ action: "updateStatusByKode", kodePesanan, status: newStatus })
+      });
+      showToast();
+      loadOrders();
+    }
+
+    function showToast() {
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function toggleMenu() {
+      document.getElementById("filterBar").classList.toggle("show");
+    }
+
+    setInterval(loadOrders, 60000);
+    loadOrders();
+  </script>
+</body>
+</html>

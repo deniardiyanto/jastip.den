@@ -253,7 +253,7 @@
                 <option value="selesai" ${d.status === "selesai" ? "selected" : ""}>Selesai</option>
               </select>
                <div class="status-badge">
-              <button onclick="">Kirim Invoice</button>
+              <button ${d.status === 'selesai' ? 'disabled' : ''} onclick="sendInvoice('${d.kodePesanan}')">Kirim Invoice</button>
               </div>
             </div>
             <small style="color:#999;"><i>${new Date(d.tanggal).toLocaleString("id-ID")}</i></small>

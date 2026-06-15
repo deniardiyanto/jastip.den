@@ -506,7 +506,7 @@
           <div id="barangList">
             <div class="barang-row">
               <div class="row-top">
-                <select
+                <!-- <select
                   name="kategori[]"
                   onchange="updateProduk(this)"
                   required
@@ -515,13 +515,20 @@
                   <option value="Bloomery">Bloomery</option>
                   <option value="Wahyu Austin">Wahyu Austin</option>
                   <option value="Bible Bake">Bible Bake</option>
-                </select>
+                </select> -->
+                <select
+  name="kategori[]"
+  onchange="updateProduk(this)"
+  required
+>
+  <option value="">Category</option>
+</select>
 
                 <select name="barang[]" required>
                   <option value="">Produk</option>
                 </select>
               </div>
-
+select[name="barang[]"]
               <div class="row-bottom">
                 <input
                   type="number"
@@ -621,65 +628,321 @@
     <div class="toast" id="toast"></div>
 
     <script>
-      const produkMaster = {
-        Bloomery: [
-          { nama: "Croissant", harga: 25000 },
-          { nama: "Donut", harga: 18000 },
-        ],
-        "Wahyu Austin": [
-          { nama: "Nasi Goreng", harga: 35000 },
-          { nama: "Mie Ayam", harga: 28000 },
-        ],
-        "Bible Bake": [
-          { nama: "Brownies", harga: 50000 },
-          { nama: "Cheesecake", harga: 75000 },
-        ],
-      };
-      function updateProduk(kategoriSelect) {
-        const row = kategoriSelect.closest(".barang-row");
+      // const produkMaster = {
+      //   Bloomery: [
+      //     { nama: "Croissant", harga: 25000 },
+      //     { nama: "Donut", harga: 18000 },
+      //   ],
+      //   "Wahyu Austin": [
+      //     { nama: "Nasi Goreng", harga: 35000 },
+      //     { nama: "Mie Ayam", harga: 28000 },
+      //   ],
+      //   "Bible Bake": [
+      //     { nama: "Brownies", harga: 50000 },
+      //     { nama: "Cheesecake", harga: 75000 },
+      //   ],
+      // };
+      // function updateProduk(kategoriSelect) {
+      //   const row = kategoriSelect.closest(".barang-row");
 
-        const produkSelect = row.querySelector('select[name="barang[]"]');
-        const hargaInput = row.querySelector('input[name="harga[]"]');
+      //   const produkSelect = row.querySelector('select[name="barang[]"]');
+      //   const hargaInput = row.querySelector('input[name="harga[]"]');
 
-        const kategori = kategoriSelect.value;
+      //   const kategori = kategoriSelect.value;
 
-        produkSelect.innerHTML = '<option value="">Pilih Produk</option>';
+      //   produkSelect.innerHTML = '<option value="">Pilih Produk</option>';
 
-        hargaInput.value = "";
+      //   hargaInput.value = "";
 
-        if (!kategori) return;
+      //   if (!kategori) return;
 
-        produkMaster[kategori].forEach((p) => {
-          const opt = document.createElement("option");
-          opt.value = p.nama;
-          opt.textContent = `${p.nama} - Rp${p.harga.toLocaleString("id-ID")}`;
-          opt.dataset.harga = p.harga;
-          produkSelect.appendChild(opt);
-        });
+      //   produkMaster[kategori].forEach((p) => {
+      //     const opt = document.createElement("option");
+      //     opt.value = p.nama;
+      //     opt.textContent = `${p.nama} - Rp${p.harga.toLocaleString("id-ID")}`;
+      //     opt.dataset.harga = p.harga;
+      //     produkSelect.appendChild(opt);
+      //   });
 
-        // produkSelect.onchange = function () {
-        //   const selected = this.options[this.selectedIndex];
+      //   // produkSelect.onchange = function () {
+      //   //   const selected = this.options[this.selectedIndex];
 
-        //   hargaInput.value = selected.dataset.harga || "";
-        // };
-        produkSelect.onchange = function () {
-          const selected = this.options[this.selectedIndex];
-          const hargaSatuan = Number(selected.dataset.harga || 0);
+      //   //   hargaInput.value = selected.dataset.harga || "";
+      //   // };
+      //   produkSelect.onchange = function () {
+      //     const selected = this.options[this.selectedIndex];
+      //     const hargaSatuan = Number(selected.dataset.harga || 0);
 
-          hargaInput.dataset.hargaSatuan = hargaSatuan;
-          const qtyInput = row.querySelector('input[name="jumlah[]"]');
+      //     hargaInput.dataset.hargaSatuan = hargaSatuan;
+      //     const qtyInput = row.querySelector('input[name="jumlah[]"]');
 
-          const qty = Number(qtyInput.value || 1);
+      //     const qty = Number(qtyInput.value || 1);
 
-          hargaInput.value = hargaSatuan * qty;
-        };
-      }
+      //     hargaInput.value = hargaSatuan * qty;
+      //   };
+      // }
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxJ5rxJJ9NY3mYRc9ovk6TBnat6rFl4KinQFqDiVnEe4o6dc2MWoQCQ-kHoNeD2WsFw3Q/exec";
+        "https://script.google.com/macros/s/AKfycby0MHgHABo-ZuDOi6e342oSDDT4dji15jiqP_syuB1KkQTPYTmlyEgkuaoiMQPqYSxVSQ/exec";
       const form = document.getElementById("orderForm");
       const overlay = document.getElementById("overlay");
       const toast = document.getElementById("toast");
       const barangList = document.getElementById("barangList");
+
+let categoryMaster = [];
+let productMaster = {};
+
+async function loadMasterData() {
+  try {
+
+    const categoryRes =
+      await fetch(
+        `${SCRIPT_URL}?action=getCategories`
+      );
+
+    categoryMaster =
+      await categoryRes.json();
+
+    const productRes =
+      await fetch(
+        `${SCRIPT_URL}?action=getProducts`
+      );
+
+    productMaster =
+      await productRes.json();
+    console.log("productMaster =", productMaster);
+
+    populateExistingCategories();
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast(
+      "Failed to load products",
+      "#e74c3c"
+    );
+  }
+}
+
+function populateExistingCategories() {
+
+  document
+    .querySelectorAll(
+      'select[name="kategori[]"]'
+    )
+    .forEach(select => {
+
+      select.innerHTML =
+        '<option value="">Category</option>';
+
+      categoryMaster.forEach(cat => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          cat.categoryName;
+
+        option.textContent =
+          cat.categoryName;
+
+        select.appendChild(option);
+
+      });
+
+    });
+
+}
+
+function updateProduk(kategoriSelect) {
+
+  const row =
+    kategoriSelect.closest(".barang-row");
+
+  const produkSelect =
+    row.querySelector(
+      'select[name="barang[]"]'
+    );
+
+  const hargaInput =
+    row.querySelector(
+      'input[name="harga[]"]'
+    );
+
+  produkSelect.innerHTML =
+    '<option value="">Product</option>';
+
+  hargaInput.value = "";
+
+  const kategori =
+    kategoriSelect.value;
+
+  if (
+    !kategori ||
+    !productMaster[kategori]
+  ) {
+    return;
+  }
+
+  productMaster[kategori]
+    .forEach(product => {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        product.productName;
+
+      option.textContent =
+        `${product.productName} - Rp ${product.unitPrice.toLocaleString("id-ID")}`;
+
+      option.dataset.price =
+        product.unitPrice;
+
+      produkSelect.appendChild(option);
+
+    });
+
+  produkSelect.onchange = function () {
+
+    const selected =
+      this.options[this.selectedIndex];
+
+    const unitPrice =
+      Number(
+        selected.dataset.price || 0
+      );
+
+    hargaInput.dataset.unitPrice =
+      unitPrice;
+
+    const qtyInput =
+      row.querySelector(
+        'input[name="jumlah[]"]'
+      );
+
+    const qty =
+      Number(
+        qtyInput.value || 1
+      );
+
+    hargaInput.value =
+      unitPrice * qty;
+
+  };
+
+}
+
+function updateTotalHarga(qtyInput) {
+
+  const row =
+    qtyInput.closest(".barang-row");
+
+  const hargaInput =
+    row.querySelector(
+      'input[name="harga[]"]'
+    );
+
+  const unitPrice =
+    Number(
+      hargaInput.dataset.unitPrice || 0
+    );
+
+  const qty =
+    Number(
+      qtyInput.value || 1
+    );
+
+  hargaInput.value =
+    unitPrice * qty;
+}
+function addBarang() {
+
+  const row =
+    document.createElement("div");
+
+  row.className =
+    "barang-row";
+
+  row.innerHTML = `
+    <div class="row-top">
+
+      <select
+        name="kategori[]"
+        onchange="updateProduk(this)"
+        required
+      >
+        <option value="">
+          Category
+        </option>
+      </select>
+
+      <select
+        name="barang[]"
+        required
+      >
+        <option value="">
+          Product
+        </option>
+      </select>
+
+    </div>
+
+    <div class="row-bottom">
+
+      <input
+        type="number"
+        name="harga[]"
+        placeholder="Total"
+        readonly
+      />
+
+      <input
+        type="number"
+        name="jumlah[]"
+        placeholder="Qty"
+        min="1"
+        value="1"
+        required
+        oninput="updateTotalHarga(this)"
+      />
+
+      <button
+        type="button"
+        class="remove-btn"
+        onclick="removeBarang(this)"
+      >
+        ✕
+      </button>
+
+    </div>
+  `;
+
+  document
+    .getElementById("barangList")
+    .appendChild(row);
+
+  const categorySelect =
+    row.querySelector(
+      'select[name="kategori[]"]'
+    );
+
+  categoryMaster.forEach(cat => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      cat.categoryName;
+
+    option.textContent =
+      cat.categoryName;
+
+    categorySelect.appendChild(option);
+
+  });
+
+}
 
       // Function to go back to previous page
       function goBack() {
@@ -704,54 +967,54 @@
         setTimeout(() => toast.classList.remove("show"), 5000);
       }
 
-      function addBarang() {
-        const row = document.createElement("div");
-        row.className = "barang-row";
-        row.innerHTML = `
-      <div class="row-top">
-                  <select
-                    name="kategori[]"
-                    onchange="updateProduk(this)"
-                    required
-                  >
-                    <option value="">Kategori</option>
-                    <option value="Bloomery">Bloomery</option>
-                    <option value="Wahyu Austin">Wahyu Austin</option>
-                    <option value="Bible Bake">Bible Bake</option>
-                  </select>
+    //   function addBarang() {
+    //     const row = document.createElement("div");
+    //     row.className = "barang-row";
+    //     row.innerHTML = `
+    //   <div class="row-top">
+    //               <select
+    //                 name="kategori[]"
+    //                 onchange="updateProduk(this)"
+    //                 required
+    //               >
+    //                 <option value="">Kategori</option>
+    //                 <option value="Bloomery">Bloomery</option>
+    //                 <option value="Wahyu Austin">Wahyu Austin</option>
+    //                 <option value="Bible Bake">Bible Bake</option>
+    //               </select>
 
-                  <select name="barang[]" required>
-                    <option value="">Produk</option>
-                  </select>
-                </div>
+    //               <select name="barang[]" required>
+    //                 <option value="">Produk</option>
+    //               </select>
+    //             </div>
 
-                <div class="row-bottom">
-                  <input
-                    type="number"
-                    name="harga[]"
-                    placeholder="Harga"
-                    readonly
-                  />
+    //             <div class="row-bottom">
+    //               <input
+    //                 type="number"
+    //                 name="harga[]"
+    //                 placeholder="Harga"
+    //                 readonly
+    //               />
 
-                  <input
-                    type="number"
-                    name="jumlah[]"
-                    placeholder="Qty"
-                    min="1"
-                    required
-                  />
+    //               <input
+    //                 type="number"
+    //                 name="jumlah[]"
+    //                 placeholder="Qty"
+    //                 min="1"
+    //                 required
+    //               />
 
-                  <button
-                    type="button"
-                    class="remove-btn"
-                    onclick="removeBarang(this)"
-                  >
-                    ✕
-                  </button>
-                </div>
-    `;
-        barangList.appendChild(row);
-      }
+    //               <button
+    //                 type="button"
+    //                 class="remove-btn"
+    //                 onclick="removeBarang(this)"
+    //               >
+    //                 ✕
+    //               </button>
+    //             </div>
+    // `;
+    //     barangList.appendChild(row);
+    //   }
 
       function removeBarang(btn) {
         if (barangList.children.length > 1) {
@@ -779,9 +1042,52 @@
         const wa = formData.get("wa");
         const catatan = formData.get("catatan");
         const alamat = formData.get("alamat");
-        const barang = formData.getAll("barang[]");
-        const jumlah = formData.getAll("jumlah[]");
+        const items = [];
 
+document
+  .querySelectorAll(".barang-row")
+  .forEach(row => {
+
+    const kategori =
+      row.querySelector(
+        'select[name="kategori[]"]'
+      ).value;
+
+    const produk =
+      row.querySelector(
+        'select[name="barang[]"]'
+      ).value;
+
+    const qty =
+      Number(
+        row.querySelector(
+          'input[name="jumlah[]"]'
+        ).value
+      );
+
+    const totalPrice =
+      Number(
+        row.querySelector(
+          'input[name="harga[]"]'
+        ).value
+      );
+
+    const unitPrice =
+      Number(
+        row.querySelector(
+          'input[name="harga[]"]'
+        ).dataset.hargaSatuan || 0
+      );
+
+    items.push({
+      categoryName: kategori,
+      productName: produk,
+      quantity: qty,
+      unitPrice: unitPrice,
+      totalPrice: totalPrice
+    });
+
+  });
         // validasi
         if (!/^(\+62|0)\d{8,15}$/.test(wa)) {
           document.querySelector('[name="wa"]').style.borderColor = "#e74c3c";
@@ -799,13 +1105,32 @@
           "-" +
           Math.random().toString(36).substring(2, 7).toUpperCase();
 
-        const data = { kodePesanan, nama, wa, catatan, alamat, barang, jumlah };
+        // const data = { kodePesanan, nama, wa, catatan, alamat, barang, jumlah };
+        const data = {
+
+  orderCode: kodePesanan,
+
+  customerName: nama,
+
+  phoneNumber: wa,
+
+  notes: catatan,
+
+  deliveryAddress: alamat,
+
+  items
+
+};
         try {
-          await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify(data),
-            mode: "no-cors",
-          });
+          await fetch(
+    `${SCRIPT_URL}?action=createOrder`,
+    {
+      method: "POST",
+      body: new URLSearchParams({
+      payload: JSON.stringify(data)
+    })
+  }
+);
           //showToast("✅ Pesanan berhasil dikirim!");
           //overlay.style.display = "none";
 
@@ -850,12 +1175,9 @@
           //alert(`✅ Pesanan berhasil dikirim!\n\nKode Pesanan Anda: ${kodePesanan}\n\nGunakan kode ini untuk melacak //status pesanan Anda.`);
           // Setelah data berhasil dikirim ke Google Sheet
           form.reset();
-          barangList.innerHTML = `
-        <div class="barang-row">
-          <input type="text" name="barang[]" placeholder="Nama barang" required>
-          <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
-          <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
-        </div>`;
+         barangList.innerHTML = "";
+
+addBarang();
         } catch (err) {
           showToast("❌ Gagal mengirim: " + err.message, "#e74c3c");
         } finally {
@@ -905,6 +1227,20 @@
           box.innerHTML = "";
         }, 5000);
       }
+     window.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+    await loadMasterData();
+
+    addBarang();
+
+    document
+      .querySelector("#barangList .barang-row")
+      ?.remove();
+
+  }
+);
     </script>
   </body>
 </html>

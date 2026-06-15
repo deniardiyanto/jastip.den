@@ -123,15 +123,59 @@
       outline: none;
     }
 
-    .barang-row {
+    /* .barang-row {
       display: flex;
       gap: 8px;
       align-items: center;
       margin-top: 8px;
-    }
+    } */
+/* disable from adjust dropdown view */
+    /* .barang-row input[type="text"] { flex: 2; }
+    .barang-row input[type="number"] { flex: 1; } */
+    .barang-row select,
+.barang-row input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: all 0.3s;
+}
 
-    .barang-row input[type="text"] { flex: 2; }
-    .barang-row input[type="number"] { flex: 1; }
+.barang-row select:focus,
+.barang-row input:focus {
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
+  outline: none;
+}
+
+.barang-row select[name="kategori[]"] {
+  flex: 1.5;
+}
+
+.barang-row select[name="barang[]"] {
+  flex: 2;
+}
+
+.barang-row input[name="harga[]"] {
+  flex: 1;
+  background: #f8f9fa;
+}
+
+.barang-row input[name="jumlah[]"] {
+  flex: 0.8;
+}
+@media (max-width: 480px) {
+  .barang-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barang-row select,
+  .barang-row input,
+  .barang-row button {
+    width: 100%;
+  }
+}
 
     .remove-btn {
       background: #ff5252;
@@ -393,11 +437,29 @@
 
         <label>Barang yang Dipesan</label>
         <div id="barangList">
-          <div class="barang-row">
+          <!-- <div class="barang-row">
             <input type="text" name="barang[]" placeholder="Nama barang" required>
             <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
             <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
-          </div>
+          </div> -->
+         <div class="barang-row">
+  <select name="kategori[]" onchange="updateProduk(this)" required>
+    <option value="">Kategori</option>
+    <option value="Bloomery">Bloomery</option>
+    <option value="Wahyu Austin">Wahyu Austin</option>
+    <option value="Bible Bake">Bible Bake</option>
+  </select>
+
+  <select name="barang[]" required>
+    <option value="">Produk</option>
+  </select>
+
+  <input type="number" name="harga[]" placeholder="Harga" readonly>
+
+  <input type="number" name="jumlah[]" placeholder="Qty" min="1" required>
+
+  <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
+</div>
         </div>
         <button type="button" class="add-btn" onclick="addBarang()">+ Tambah Barang</button>
 
@@ -436,6 +498,51 @@
   <div class="toast" id="toast"></div>
 
   <script>
+  const produkMaster = {
+  "Bloomery": [
+    { nama: "Croissant", harga: 25000 },
+    { nama: "Donut", harga: 18000 }
+  ],
+  "Wahyu Austin": [
+    { nama: "Nasi Goreng", harga: 35000 },
+    { nama: "Mie Ayam", harga: 28000 }
+  ],
+  "Bible Bake": [
+    { nama: "Brownies", harga: 50000 },
+    { nama: "Cheesecake", harga: 75000 }
+  ]
+};
+function updateProduk(kategoriSelect) {
+  const row = kategoriSelect.closest(".barang-row");
+
+  const produkSelect = row.querySelector('select[name="barang[]"]');
+  const hargaInput = row.querySelector('input[name="harga[]"]');
+
+  const kategori = kategoriSelect.value;
+
+  produkSelect.innerHTML =
+    '<option value="">Pilih Produk</option>';
+
+  hargaInput.value = '';
+
+  if (!kategori) return;
+
+  produkMaster[kategori].forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.nama;
+    opt.textContent = `${p.nama} - Rp${p.harga.toLocaleString('id-ID')}`;
+    opt.dataset.harga = p.harga;
+    produkSelect.appendChild(opt);
+  });
+
+  produkSelect.onchange = function() {
+    const selected =
+      this.options[this.selectedIndex];
+
+    hargaInput.value =
+      selected.dataset.harga || '';
+  };
+}
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJ5rxJJ9NY3mYRc9ovk6TBnat6rFl4KinQFqDiVnEe4o6dc2MWoQCQ-kHoNeD2WsFw3Q/exec";
   const form = document.getElementById('orderForm');
   const overlay = document.getElementById('overlay');

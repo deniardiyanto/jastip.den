@@ -129,12 +129,36 @@
         outline: none;
       }
 
-      /* .barang-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 8px;
-    } */
+      .barang-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .row-top,
+      .row-bottom {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .row-top select {
+        flex: 1;
+      }
+
+      .row-bottom input[name="harga[]"] {
+        flex: 2;
+      }
+
+      .row-bottom input[name="jumlah[]"] {
+        flex: 1;
+      }
+
+      .row-bottom .remove-btn {
+        width: 42px;
+        flex-shrink: 0;
+      }
       /* disable from adjust dropdown view */
       /* .barang-row input[type="text"] { flex: 2; }
     .barang-row input[type="number"] { flex: 1; } */
@@ -480,45 +504,48 @@
 
           <label>Barang yang Dipesan</label>
           <div id="barangList">
-            <!-- <div class="barang-row">
-            <input type="text" name="barang[]" placeholder="Nama barang" required>
-            <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
-            <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
-          </div> -->
             <div class="barang-row">
-              <select name="kategori[]" onchange="updateProduk(this)" required>
-                <option value="">Kategori</option>
-                <option value="Bloomery">Bloomery</option>
-                <option value="Wahyu Austin">Wahyu Austin</option>
-                <option value="Bible Bake">Bible Bake</option>
-              </select>
+              <div class="row-top">
+                <select
+                  name="kategori[]"
+                  onchange="updateProduk(this)"
+                  required
+                >
+                  <option value="">Kategori</option>
+                  <option value="Bloomery">Bloomery</option>
+                  <option value="Wahyu Austin">Wahyu Austin</option>
+                  <option value="Bible Bake">Bible Bake</option>
+                </select>
 
-              <select name="barang[]" required>
-                <option value="">Produk</option>
-              </select>
+                <select name="barang[]" required>
+                  <option value="">Produk</option>
+                </select>
+              </div>
 
-              <input
-                type="number"
-                name="harga[]"
-                placeholder="Harga"
-                readonly
-              />
+              <div class="row-bottom">
+                <input
+                  type="number"
+                  name="harga[]"
+                  placeholder="Harga"
+                  readonly
+                />
 
-              <input
-                type="number"
-                name="jumlah[]"
-                placeholder="Qty"
-                min="1"
-                required
-              />
+                <input
+                  type="number"
+                  name="jumlah[]"
+                  placeholder="Qty"
+                  min="1"
+                  required
+                />
 
-              <button
-                type="button"
-                class="remove-btn"
-                onclick="removeBarang(this)"
-              >
-                ✕
-              </button>
+                <button
+                  type="button"
+                  class="remove-btn"
+                  onclick="removeBarang(this)"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           </div>
           <button type="button" class="add-btn" onclick="addBarang()">
@@ -661,9 +688,47 @@
         const row = document.createElement("div");
         row.className = "barang-row";
         row.innerHTML = `
-      <input type="text" name="barang[]" placeholder="Nama barang" required>
-      <input type="number" name="jumlah[]" placeholder="Jumlah" min="1" required>
-      <button type="button" class="remove-btn" onclick="removeBarang(this)">✕</button>
+      <div class="row-top">
+                  <select
+                    name="kategori[]"
+                    onchange="updateProduk(this)"
+                    required
+                  >
+                    <option value="">Kategori</option>
+                    <option value="Bloomery">Bloomery</option>
+                    <option value="Wahyu Austin">Wahyu Austin</option>
+                    <option value="Bible Bake">Bible Bake</option>
+                  </select>
+
+                  <select name="barang[]" required>
+                    <option value="">Produk</option>
+                  </select>
+                </div>
+
+                <div class="row-bottom">
+                  <input
+                    type="number"
+                    name="harga[]"
+                    placeholder="Harga"
+                    readonly
+                  />
+
+                  <input
+                    type="number"
+                    name="jumlah[]"
+                    placeholder="Qty"
+                    min="1"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    class="remove-btn"
+                    onclick="removeBarang(this)"
+                  >
+                    ✕
+                  </button>
+                </div>
     `;
         barangList.appendChild(row);
       }

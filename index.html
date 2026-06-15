@@ -530,12 +530,21 @@
                   readonly
                 />
 
-                <input
+                <!-- <input
                   type="number"
                   name="jumlah[]"
                   placeholder="Qty"
                   min="1"
                   required
+                /> -->
+                <input
+                  type="number"
+                  name="jumlah[]"
+                  placeholder="Qty"
+                  min="1"
+                  value="1"
+                  required
+                  oninput="updateTotalHarga(this)"
                 />
 
                 <button
@@ -648,10 +657,21 @@
           produkSelect.appendChild(opt);
         });
 
+        // produkSelect.onchange = function () {
+        //   const selected = this.options[this.selectedIndex];
+
+        //   hargaInput.value = selected.dataset.harga || "";
+        // };
         produkSelect.onchange = function () {
           const selected = this.options[this.selectedIndex];
+          const hargaSatuan = Number(selected.dataset.harga || 0);
 
-          hargaInput.value = selected.dataset.harga || "";
+          hargaInput.dataset.hargaSatuan = hargaSatuan;
+          const qtyInput = row.querySelector('input[name="jumlah[]"]');
+
+          const qty = Number(qtyInput.value || 1);
+
+          hargaInput.value = hargaSatuan * qty;
         };
       }
       const SCRIPT_URL =
@@ -735,10 +755,21 @@
 
       function removeBarang(btn) {
         if (barangList.children.length > 1) {
-          btn.parentElement.remove();
+          btn.closest(".barang-row").remove();
         } else {
           showToast("Minimal 1 barang harus ada!", "#e67e22");
         }
+      }
+      function updateTotalHarga(qtyInput) {
+        const row = qtyInput.closest(".barang-row");
+
+        const hargaInput = row.querySelector('input[name="harga[]"]');
+
+        const hargaSatuan = Number(hargaInput.dataset.hargaSatuan || 0);
+
+        const qty = Number(qtyInput.value || 1);
+
+        hargaInput.value = hargaSatuan * qty;
       }
 
       form.addEventListener("submit", async (e) => {

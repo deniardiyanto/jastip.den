@@ -517,18 +517,18 @@
                   <option value="Bible Bake">Bible Bake</option>
                 </select> -->
                 <select
-  name="kategori[]"
-  onchange="updateProduk(this)"
-  required
->
-  <option value="">Category</option>
-</select>
+                  name="kategori[]"
+                  onchange="updateProduk(this)"
+                  required
+                >
+                  <option value="">Kategori</option>
+                </select>
 
                 <select name="barang[]" required>
                   <option value="">Produk</option>
                 </select>
               </div>
-select[name="barang[]"]
+              <!-- select[name="barang[]"] -->
               <div class="row-bottom">
                 <input
                   type="number"
@@ -682,189 +682,114 @@ select[name="barang[]"]
       //   };
       // }
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycby0MHgHABo-ZuDOi6e342oSDDT4dji15jiqP_syuB1KkQTPYTmlyEgkuaoiMQPqYSxVSQ/exec";
+        "https://script.google.com/macros/s/AKfycbz-CDFn56lHj7bqlKwsdmJujGvrYJz-Ky4s0GvJcXugUZmy_u-hfdMsmVbS4_S2KJmpIg/exec";
       const form = document.getElementById("orderForm");
       const overlay = document.getElementById("overlay");
       const toast = document.getElementById("toast");
       const barangList = document.getElementById("barangList");
 
-let categoryMaster = [];
-let productMaster = {};
+      let categoryMaster = [];
+      let productMaster = {};
 
-async function loadMasterData() {
-  try {
+      async function loadMasterData() {
+        try {
+          const categoryRes = await fetch(`${SCRIPT_URL}?action=getCategories`);
 
-    const categoryRes =
-      await fetch(
-        `${SCRIPT_URL}?action=getCategories`
-      );
+          categoryMaster = await categoryRes.json();
 
-    categoryMaster =
-      await categoryRes.json();
+          const productRes = await fetch(`${SCRIPT_URL}?action=getProducts`);
 
-    const productRes =
-      await fetch(
-        `${SCRIPT_URL}?action=getProducts`
-      );
+          productMaster = await productRes.json();
+          // console.log("Categories:", categoryMaster);
+          // console.log("Products:", productMaster);
 
-    productMaster =
-      await productRes.json();
-    console.log("productMaster =", productMaster);
+          populateExistingCategories();
+        } catch (err) {
+          console.error(err);
 
-    populateExistingCategories();
+          showToast("Failed to load products", "#e74c3c");
+        }
+      }
 
-  } catch (err) {
+      function populateExistingCategories() {
+        document
+          .querySelectorAll('select[name="kategori[]"]')
+          .forEach((select) => {
+            select.innerHTML = '<option value="">Kategori</option>';
 
-    console.error(err);
+            categoryMaster.forEach((cat) => {
+              const option = document.createElement("option");
 
-    showToast(
-      "Failed to load products",
-      "#e74c3c"
-    );
-  }
-}
+              option.value = cat.categoryName;
 
-function populateExistingCategories() {
+              option.textContent = cat.categoryName;
 
-  document
-    .querySelectorAll(
-      'select[name="kategori[]"]'
-    )
-    .forEach(select => {
+              select.appendChild(option);
+            });
+          });
+      }
 
-      select.innerHTML =
-        '<option value="">Category</option>';
+      function updateProduk(kategoriSelect) {
+        const row = kategoriSelect.closest(".barang-row");
 
-      categoryMaster.forEach(cat => {
+        const produkSelect = row.querySelector('select[name="barang[]"]');
 
-        const option =
-          document.createElement("option");
+        const hargaInput = row.querySelector('input[name="harga[]"]');
 
-        option.value =
-          cat.categoryName;
+        produkSelect.innerHTML = '<option value="">Product</option>';
 
-        option.textContent =
-          cat.categoryName;
+        hargaInput.value = "";
 
-        select.appendChild(option);
+        const kategori = kategoriSelect.value;
 
-      });
+        if (!kategori || !productMaster[kategori]) {
+          return;
+        }
 
-    });
+        productMaster[kategori].forEach((product) => {
+          const option = document.createElement("option");
 
-}
+          option.value = product.productName;
 
-function updateProduk(kategoriSelect) {
+          option.textContent = `${product.productName} - Rp ${product.unitPrice.toLocaleString("id-ID")}`;
 
-  const row =
-    kategoriSelect.closest(".barang-row");
+          option.dataset.price = product.unitPrice;
 
-  const produkSelect =
-    row.querySelector(
-      'select[name="barang[]"]'
-    );
+          produkSelect.appendChild(option);
+        });
 
-  const hargaInput =
-    row.querySelector(
-      'input[name="harga[]"]'
-    );
+        produkSelect.onchange = function () {
+          const selected = this.options[this.selectedIndex];
 
-  produkSelect.innerHTML =
-    '<option value="">Product</option>';
+          const unitPrice = Number(selected.dataset.price || 0);
 
-  hargaInput.value = "";
+          hargaInput.dataset.unitPrice = unitPrice;
 
-  const kategori =
-    kategoriSelect.value;
+          const qtyInput = row.querySelector('input[name="jumlah[]"]');
 
-  if (
-    !kategori ||
-    !productMaster[kategori]
-  ) {
-    return;
-  }
+          const qty = Number(qtyInput.value || 1);
 
-  productMaster[kategori]
-    .forEach(product => {
+          hargaInput.value = unitPrice * qty;
+        };
+      }
 
-      const option =
-        document.createElement("option");
+      function updateTotalHarga(qtyInput) {
+        const row = qtyInput.closest(".barang-row");
 
-      option.value =
-        product.productName;
+        const hargaInput = row.querySelector('input[name="harga[]"]');
 
-      option.textContent =
-        `${product.productName} - Rp ${product.unitPrice.toLocaleString("id-ID")}`;
+        const unitPrice = Number(hargaInput.dataset.unitPrice || 0);
 
-      option.dataset.price =
-        product.unitPrice;
+        const qty = Number(qtyInput.value || 1);
 
-      produkSelect.appendChild(option);
+        hargaInput.value = unitPrice * qty;
+      }
+      function addBarang() {
+        const row = document.createElement("div");
 
-    });
+        row.className = "barang-row";
 
-  produkSelect.onchange = function () {
-
-    const selected =
-      this.options[this.selectedIndex];
-
-    const unitPrice =
-      Number(
-        selected.dataset.price || 0
-      );
-
-    hargaInput.dataset.unitPrice =
-      unitPrice;
-
-    const qtyInput =
-      row.querySelector(
-        'input[name="jumlah[]"]'
-      );
-
-    const qty =
-      Number(
-        qtyInput.value || 1
-      );
-
-    hargaInput.value =
-      unitPrice * qty;
-
-  };
-
-}
-
-function updateTotalHarga(qtyInput) {
-
-  const row =
-    qtyInput.closest(".barang-row");
-
-  const hargaInput =
-    row.querySelector(
-      'input[name="harga[]"]'
-    );
-
-  const unitPrice =
-    Number(
-      hargaInput.dataset.unitPrice || 0
-    );
-
-  const qty =
-    Number(
-      qtyInput.value || 1
-    );
-
-  hargaInput.value =
-    unitPrice * qty;
-}
-function addBarang() {
-
-  const row =
-    document.createElement("div");
-
-  row.className =
-    "barang-row";
-
-  row.innerHTML = `
+        row.innerHTML = `
     <div class="row-top">
 
       <select
@@ -873,7 +798,7 @@ function addBarang() {
         required
       >
         <option value="">
-          Category
+          Kategori
         </option>
       </select>
 
@@ -918,31 +843,20 @@ function addBarang() {
     </div>
   `;
 
-  document
-    .getElementById("barangList")
-    .appendChild(row);
+        document.getElementById("barangList").appendChild(row);
 
-  const categorySelect =
-    row.querySelector(
-      'select[name="kategori[]"]'
-    );
+        const categorySelect = row.querySelector('select[name="kategori[]"]');
 
-  categoryMaster.forEach(cat => {
+        categoryMaster.forEach((cat) => {
+          const option = document.createElement("option");
 
-    const option =
-      document.createElement("option");
+          option.value = cat.categoryName;
 
-    option.value =
-      cat.categoryName;
+          option.textContent = cat.categoryName;
 
-    option.textContent =
-      cat.categoryName;
-
-    categorySelect.appendChild(option);
-
-  });
-
-}
+          categorySelect.appendChild(option);
+        });
+      }
 
       // Function to go back to previous page
       function goBack() {
@@ -967,54 +881,54 @@ function addBarang() {
         setTimeout(() => toast.classList.remove("show"), 5000);
       }
 
-    //   function addBarang() {
-    //     const row = document.createElement("div");
-    //     row.className = "barang-row";
-    //     row.innerHTML = `
-    //   <div class="row-top">
-    //               <select
-    //                 name="kategori[]"
-    //                 onchange="updateProduk(this)"
-    //                 required
-    //               >
-    //                 <option value="">Kategori</option>
-    //                 <option value="Bloomery">Bloomery</option>
-    //                 <option value="Wahyu Austin">Wahyu Austin</option>
-    //                 <option value="Bible Bake">Bible Bake</option>
-    //               </select>
+      //   function addBarang() {
+      //     const row = document.createElement("div");
+      //     row.className = "barang-row";
+      //     row.innerHTML = `
+      //   <div class="row-top">
+      //               <select
+      //                 name="kategori[]"
+      //                 onchange="updateProduk(this)"
+      //                 required
+      //               >
+      //                 <option value="">Kategori</option>
+      //                 <option value="Bloomery">Bloomery</option>
+      //                 <option value="Wahyu Austin">Wahyu Austin</option>
+      //                 <option value="Bible Bake">Bible Bake</option>
+      //               </select>
 
-    //               <select name="barang[]" required>
-    //                 <option value="">Produk</option>
-    //               </select>
-    //             </div>
+      //               <select name="barang[]" required>
+      //                 <option value="">Produk</option>
+      //               </select>
+      //             </div>
 
-    //             <div class="row-bottom">
-    //               <input
-    //                 type="number"
-    //                 name="harga[]"
-    //                 placeholder="Harga"
-    //                 readonly
-    //               />
+      //             <div class="row-bottom">
+      //               <input
+      //                 type="number"
+      //                 name="harga[]"
+      //                 placeholder="Harga"
+      //                 readonly
+      //               />
 
-    //               <input
-    //                 type="number"
-    //                 name="jumlah[]"
-    //                 placeholder="Qty"
-    //                 min="1"
-    //                 required
-    //               />
+      //               <input
+      //                 type="number"
+      //                 name="jumlah[]"
+      //                 placeholder="Qty"
+      //                 min="1"
+      //                 required
+      //               />
 
-    //               <button
-    //                 type="button"
-    //                 class="remove-btn"
-    //                 onclick="removeBarang(this)"
-    //               >
-    //                 ✕
-    //               </button>
-    //             </div>
-    // `;
-    //     barangList.appendChild(row);
-    //   }
+      //               <button
+      //                 type="button"
+      //                 class="remove-btn"
+      //                 onclick="removeBarang(this)"
+      //               >
+      //                 ✕
+      //               </button>
+      //             </div>
+      // `;
+      //     barangList.appendChild(row);
+      //   }
 
       function removeBarang(btn) {
         if (barangList.children.length > 1) {
@@ -1044,50 +958,29 @@ function addBarang() {
         const alamat = formData.get("alamat");
         const items = [];
 
-document
-  .querySelectorAll(".barang-row")
-  .forEach(row => {
+        document.querySelectorAll(".barang-row").forEach((row) => {
+          const kategori = row.querySelector('select[name="kategori[]"]').value;
 
-    const kategori =
-      row.querySelector(
-        'select[name="kategori[]"]'
-      ).value;
+          const produk = row.querySelector('select[name="barang[]"]').value;
 
-    const produk =
-      row.querySelector(
-        'select[name="barang[]"]'
-      ).value;
+          const qty = Number(row.querySelector('input[name="jumlah[]"]').value);
 
-    const qty =
-      Number(
-        row.querySelector(
-          'input[name="jumlah[]"]'
-        ).value
-      );
+          const totalPrice = Number(
+            row.querySelector('input[name="harga[]"]').value,
+          );
 
-    const totalPrice =
-      Number(
-        row.querySelector(
-          'input[name="harga[]"]'
-        ).value
-      );
+          const unitPrice = Number(
+            row.querySelector('input[name="harga[]"]').dataset.hargaSatuan || 0,
+          );
 
-    const unitPrice =
-      Number(
-        row.querySelector(
-          'input[name="harga[]"]'
-        ).dataset.hargaSatuan || 0
-      );
-
-    items.push({
-      categoryName: kategori,
-      productName: produk,
-      quantity: qty,
-      unitPrice: unitPrice,
-      totalPrice: totalPrice
-    });
-
-  });
+          items.push({
+            categoryName: kategori,
+            productName: produk,
+            quantity: qty,
+            unitPrice: unitPrice,
+            totalPrice: totalPrice,
+          });
+        });
         // validasi
         if (!/^(\+62|0)\d{8,15}$/.test(wa)) {
           document.querySelector('[name="wa"]').style.borderColor = "#e74c3c";
@@ -1107,30 +1000,25 @@ document
 
         // const data = { kodePesanan, nama, wa, catatan, alamat, barang, jumlah };
         const data = {
+          orderCode: kodePesanan,
 
-  orderCode: kodePesanan,
+          customerName: nama,
 
-  customerName: nama,
+          phoneNumber: wa,
 
-  phoneNumber: wa,
+          notes: catatan,
 
-  notes: catatan,
+          deliveryAddress: alamat,
 
-  deliveryAddress: alamat,
-
-  items
-
-};
+          items,
+        };
         try {
-          await fetch(
-    `${SCRIPT_URL}?action=createOrder`,
-    {
-      method: "POST",
-      body: new URLSearchParams({
-      payload: JSON.stringify(data)
-    })
-  }
-);
+          await fetch(`${SCRIPT_URL}?action=createOrder`, {
+            method: "POST",
+            body: new URLSearchParams({
+              payload: JSON.stringify(data),
+            }),
+          });
           //showToast("✅ Pesanan berhasil dikirim!");
           //overlay.style.display = "none";
 
@@ -1175,9 +1063,9 @@ document
           //alert(`✅ Pesanan berhasil dikirim!\n\nKode Pesanan Anda: ${kodePesanan}\n\nGunakan kode ini untuk melacak //status pesanan Anda.`);
           // Setelah data berhasil dikirim ke Google Sheet
           form.reset();
-         barangList.innerHTML = "";
+          barangList.innerHTML = "";
 
-addBarang();
+          addBarang();
         } catch (err) {
           showToast("❌ Gagal mengirim: " + err.message, "#e74c3c");
         } finally {
@@ -1227,20 +1115,13 @@ addBarang();
           box.innerHTML = "";
         }, 5000);
       }
-     window.addEventListener(
-  "DOMContentLoaded",
-  async () => {
+      window.addEventListener("DOMContentLoaded", async () => {
+        await loadMasterData();
 
-    await loadMasterData();
+        addBarang();
 
-    addBarang();
-
-    document
-      .querySelector("#barangList .barang-row")
-      ?.remove();
-
-  }
-);
+        document.querySelector("#barangList .barang-row")?.remove();
+      });
     </script>
   </body>
 </html>

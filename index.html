@@ -695,8 +695,7 @@
         };
       }
 
-      function updateTotalHarga(qtyInput) {
-        alert("updateTotalHarga called");
+      window.updateTotalHarga = function (qtyInput) {
 
         const row = qtyInput.closest(".barang-row");
 
@@ -704,18 +703,12 @@
 
         const hargaInput = row.querySelector('input[name="harga[]"]');
 
-        alert("Product = " + produkSelect.value);
-
         const unitPrice = Number(produkSelect.dataset.unitPrice || 0);
-
-        alert("Price = " + unitPrice);
 
         const qty = Number(qtyInput.value || 1);
 
-        alert("Qty = " + qty);
-
         hargaInput.value = unitPrice * qty;
-      }
+      };
 
       function addBarang() {
         const row = document.createElement("div");

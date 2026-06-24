@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jastip.den — Form Order</title>
+    <title>Jastip.den — Kemudahan Kualitas</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -469,6 +469,68 @@
           width: 100%;
         }
       }
+      .tracking-progress {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin: 20px 0 30px;
+        position: relative;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70px;
+        z-index: 2;
+      }
+
+      .circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ddd;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .step.active .circle {
+        background: #ff6b35;
+        color: white;
+      }
+
+      .label {
+        margin-top: 8px;
+        font-size: 11px;
+        text-align: center;
+        line-height: 1.3;
+      }
+
+      .line {
+        flex: 1;
+        height: 4px;
+        background: #ddd;
+        margin-top: 14px;
+      }
+
+      .line.active {
+        background: #ff6b35;
+      }
+      .order-items {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+      }
+
+      .order-items li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
     </style>
   </head>
   <body>
@@ -604,7 +666,7 @@
 
     <script>
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbz-CDFn56lHj7bqlKwsdmJujGvrYJz-Ky4s0GvJcXugUZmy_u-hfdMsmVbS4_S2KJmpIg/exec";
+        "https://script.google.com/macros/s/AKfycbwkpdxDyUHnBitJNRjbnyklIqqnKpS1kvaYVAttbt40suaaHS5U6lkh7KiAQQwWSBhVYQ/exec";
       const form = document.getElementById("orderForm");
       const overlay = document.getElementById("overlay");
       const toast = document.getElementById("toast");
@@ -696,7 +758,6 @@
       }
 
       window.updateTotalHarga = function (qtyInput) {
-
         const row = qtyInput.closest(".barang-row");
 
         const produkSelect = row.querySelector('select[name="barang[]"]');
@@ -846,15 +907,13 @@
             row.querySelector('input[name="harga[]"]').value,
           );
 
-          const unitPrice = Number(
-            row.querySelector('input[name="harga[]"]').dataset.hargaSatuan || 0,
-          );
-
           items.push({
             categoryName: kategori,
             productName: produk,
             quantity: qty,
-            unitPrice: unitPrice,
+            unitPrice: productMaster[kategori].find(
+              (p) => p.productName === produk,
+            ).unitPrice,
             totalPrice: totalPrice,
           });
         });
@@ -955,20 +1014,117 @@
 
         try {
           const res = await fetch(
-            `${SCRIPT_URL}?action=track&kode=${encodeURIComponent(kode)}`,
+            `${SCRIPT_URL}?action=trackOrder&orderCode=${encodeURIComponent(kode)}`,
           );
           const data = await res.json();
 
-          if (data.status) {
+          if (data.success) {
+            //       box.className = "status-box";
+            //       box.innerHTML = `
+            //   <div class="status-header">
+            //     <span>${data.status.toUpperCase()}</span>
+            //   </div>
+            //   <p><b>Nama Pemesan:</b> ${data.nama ?? "-"}</p>
+            //   <p><b>Barang:</b> ${data.barang ?? "-"}</p>
+            //   <small>🕒 Terakhir diperbarui: ${data.updated ?? "-"}</small>
+            // `;
+            const order = data.order;
+
             box.className = "status-box";
+            const statusSteps = [
+              {
+                code: "NEW",
+                label: "Order Masuk",
+                icon: "fa-cart-shopping",
+              },
+              {
+                code: "BILL",
+                label: "Menunggu Pembayaran",
+                icon: "fa-file-invoice-dollar",
+              },
+              {
+                code: "BILLED",
+                label: "Sudah Dibayar",
+                icon: "fa-money-bill-wave",
+              },
+              {
+                code: "PROCESS",
+                label: "Sedang Diproses",
+                icon: "fa-box",
+              },
+              {
+                code: "DONE",
+                label: "Siap Antar",
+                icon: "fa-truck",
+              },
+            ];
+
+            const currentIndex = statusSteps.findIndex(
+              (s) => s.code === order.status,
+            );
+
+            const progressHtml = `
+<div class="tracking-progress">
+  ${statusSteps
+    .map(
+      (step, index) => `
+    <div class="step ${index <= currentIndex ? "active" : ""}">
+        <div class="circle">
+  <i class="fas ${step.icon}"></i>
+</div>
+      <div class="label">${step.label}</div>
+    
+    </div>
+    ${
+      index < statusSteps.length - 1
+        ? `<div class="line ${index < currentIndex ? "active" : ""}"></div>`
+        : ""
+    }
+  `,
+    )
+    .join("")}
+</div>
+`;
+
             box.innerHTML = `
-        <div class="status-header">
-          <span>${data.status.toUpperCase()}</span>
-        </div>
-        <p><b>Nama Pemesan:</b> ${data.nama ?? "-"}</p>
-        <p><b>Barang:</b> ${data.barang ?? "-"}</p>
-        <small>🕒 Terakhir diperbarui: ${data.updated ?? "-"}</small>
-      `;
+<div class="status-header">
+  <span>${order.status}</span>
+</div>
+
+${progressHtml}
+
+<p><b>Kode Pesanan:</b> ${order.orderCode}</p>
+
+<p><b>Nama Pemesan:</b> ${order.customerName}</p>
+
+<p><b>Alamat:</b> ${order.deliveryAddress}</p>
+
+<p><b>Catatan:</b> ${order.notes || "-"}</p>
+
+<p>
+  <b>Total:</b>
+  Rp ${order.grandTotal.toLocaleString("id-ID")}
+</p>
+
+<p><b>Pesanan:</b></p>
+
+<ul class="order-items">
+  ${order.items
+    .map(
+      (item) => `
+    <li>
+      <span>${item.productName} (${item.quantity}x)</span>
+      <span>Rp ${item.totalPrice.toLocaleString("id-ID")}</span>
+    </li>
+  `,
+    )
+    .join("")}
+</ul>
+
+<small>
+🕒 ${new Date(order.orderDate).toLocaleString("id-ID")}
+</small>
+`;
           } else {
             box.className = "status-box status-error";
             box.innerHTML =

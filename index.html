@@ -8,6 +8,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link
+      rel="icon"
+      href="https://img.icons8.com/pulsar-gradient/48/shop-arrow.png"
+      type="image/png"
+    />
     <style>
       /* ---------- GLOBAL ---------- */
       * {
@@ -531,6 +536,11 @@
         padding: 8px 0;
         border-bottom: 1px solid #eee;
       }
+      .required-label::after {
+        content: " *";
+        color: red;
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -542,7 +552,7 @@
     <div class="content">
       <div class="container">
         <form id="orderForm">
-          <label>Nama</label>
+          <label class="required-label">Nama</label>
           <input
             type="text"
             name="nama"
@@ -550,7 +560,7 @@
             placeholder="Masukkan nama Anda"
           />
 
-          <label>Nomor WA</label>
+          <label class="required-label">Nomor WA</label>
           <input
             type="text"
             name="wa"
@@ -558,7 +568,7 @@
             placeholder="contoh: 08123456789 / +628123456789"
           />
 
-          <label>Barang yang Dipesan</label>
+          <label class="required-label">Barang yang Dipesan</label>
           <div id="barangList">
             <div class="barang-row">
               <div class="row-top">
@@ -605,14 +615,14 @@
             + Tambah Barang
           </button>
 
-          <label>Opsi 2 apabila pilihan Varian kosong</label>
+          <label>Tambahkan keterangan</label>
           <textarea
             name="catatan"
             rows="3"
             placeholder="Tulis opsi lain jika varian habis"
           ></textarea>
 
-          <label>Alamat Pengiriman</label>
+          <label class="required-label">Alamat Pengiriman</label>
           <textarea
             name="alamat"
             rows="3"
@@ -1019,15 +1029,6 @@
           const data = await res.json();
 
           if (data.success) {
-            //       box.className = "status-box";
-            //       box.innerHTML = `
-            //   <div class="status-header">
-            //     <span>${data.status.toUpperCase()}</span>
-            //   </div>
-            //   <p><b>Nama Pemesan:</b> ${data.nama ?? "-"}</p>
-            //   <p><b>Barang:</b> ${data.barang ?? "-"}</p>
-            //   <small>🕒 Terakhir diperbarui: ${data.updated ?? "-"}</small>
-            // `;
             const order = data.order;
 
             box.className = "status-box";
